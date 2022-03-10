@@ -20,13 +20,6 @@ users_db = UsersDB("db/users.db")
 root = RootUser(ROOT_ACESS, users_db)
 add_admin = AddAdmin(bot, users_db)
 
-"""Сделать для этого функцию
-
-await state.update_data(photo_url=get_image_url())
-    data = await state.get_data()
-    await bot.send_photo(message.chat.id, data["photo_url"], reply_markup=create_confirmation_keyboard())
-"""
-
 
 @dp.message_handler(commands="start", state=[None, User_state.admin_started, User_state.user_started])
 async def start_handle(message: types.Message, state: FSMContext):
@@ -54,14 +47,8 @@ check_acess = CheckAcess(bot, users_db, start_handle)
 
 @dp.message_handler(commands="help", state=[None, User_state.admin_started, User_state.user_started])
 async def haldle_help(message: types.Message):
-    help_message = """Если у вас возник какой либо баг, сообщите мне в ТГ (В описании бота).
-Зачастую может помочь /start.
-Вы можете постить картинки в ТГ канал прямо из бота, для этого вам нужно:
-1) Быть админом этого канала с возможностью публикации сообщений.
-2) Назначить бота админом этого канала с возможностью публикации сообщений.
-3) Переслать любой пост из этого канала.
-"""
-    await bot.send_message(message.chat.id, help_message)
+    with open("source/help.txt", "r") as help:
+        await bot.send_message(message.chat.id, help.read())
 
 
 @dp.message_handler(content_types=["text", "photo"], is_forwarded=True,
