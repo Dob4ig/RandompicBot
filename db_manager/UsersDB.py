@@ -128,20 +128,15 @@ class UsersDB:
             db.close()
             return "Пользователь/канал не найден"
 
-    """Жесткий костыль (Наверное)
-    От get_user() мне нужно множество id,
-    но fetchall() возвращает список кортежей,
-    ничего лучше преобразования через вложенные циклы ещё не придумал =(
-    """
-
-    def get_users(self, role: str) -> set:
+    def get_users(self, *roles: str) -> set:
         db = sqlite3.connect(self.path)
         cursor = db.cursor()
-        cursor.execute("SELECT user_id FROM users WHERE role = ? ", (role,))
         users = set()
-        for turples in cursor.fetchall():
-            for id in turples:
-                users.add(id)
+        for role in roles:
+            cursor.execute(
+                "SELECT user_id FROM users WHERE role = ? ", (role,))
+            for turple in cursor.fetchall():
+                users.add(turple[0])
         db.close()
         return users
 
