@@ -64,30 +64,13 @@ async def handle_nonreg(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals="Далее🖼"), state=User_state.user_started)
 async def show_user_images(message: types.Message, state: FSMContext):
-    await check_acess.check_user(message, state)
+    if not await check_acess.check_user(message, state):
+        await start_handle(message, state)
 
 
 @dp.message_handler(Text(equals=["Отправка👍", "Пропуск❌"]), state=User_state.admin_started)
 async def show_admin_images(message: types.Message, state: FSMContext):
-    # Проверка админ ли отправитель / не убрали ли ему админку
-    #  ---
-    if message.from_user.id in users_db.get_users("admin"):
-        pass
-    else:
-        await start_handle(message, state)
-        return
-    try:
-        if await add_admin.get_is_admin(message.from_user.id, users_db.get_channel(message.from_user.id))\
-                and await add_admin.get_is_admin(bot.id, users_db.get_channel(message.from_user.id)):
-            pass
-        else:
-            users_db.del_admin(message.from_user.id)
-            await start_handle(message)
-    except:
-        users_db.del_admin(message.from_user.id)
-        await start_handle(message)
-    # ---
-        users_db.del_admin(message.from_user.id)
+    if not check_acess.check_admin(message):
         await start_handle(message)
     data = await state.get_data()
     if message.text == "Отправка👍":

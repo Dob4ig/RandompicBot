@@ -5,10 +5,10 @@ from Keyboard.keyboard import create_user_keyboard
 
 
 class CheckAcess():
-    def __init__(self, bot, db, func) -> None:
+    def __init__(self, bot, db, add_admin) -> None:
         self.bot = bot
         self.db = db
-        self.func = func
+        self.add_admin = add_admin
 
     async def __send_photo(self, message: Message, state: FSMContext, keyboard):
         await state.update_data(photo_url=get_image_url())
@@ -20,17 +20,36 @@ class CheckAcess():
             await self.__send_photo(message, state, create_user_keyboard())
             return True
         else:
-            await self.func(message, state)
+            return False
+
+    async def check_admin(self, message: Message) -> bool:
+        try:
+            if await message.from_user.id in self.db.get_users("admin")\
+                    and await self.add_admin.get_is_admin(message.from_user.id, self.db.get_channel(message.from_user.id))\
+                    and await self.add_admin.get_is_admin(self.bot.id, self.db.get_channel(message.from_user.id)):
+                pass
+            else:
+                self.db.del_admin(message.from_user.id)
+                return False
+        except:
+            self.db.del_admin(message.from_user.id)
             return False
 
 
 """
- if message.from_user.id in users_db.get_users("user"):
-        await state.update_data(photo_url=get_image_url())
-        data = await state.get_data()
-        await bot.send_photo(message.chat.id, photo=data["photo_url"], reply_markup=create_user_keyboard())
+if message.from_user.id in users_db.get_users("admin"):
+        pass
     else:
         await start_handle(message, state)
         return
-
+    try:
+        if await add_admin.get_is_admin(message.from_user.id, users_db.get_channel(message.from_user.id))\
+                and await add_admin.get_is_admin(bot.id, users_db.get_channel(message.from_user.id)):
+            pass
+        else:
+            users_db.del_admin(message.from_user.id)
+            await start_handle(message)
+    except:
+        users_db.del_admin(message.from_user.id)
+        await start_handle(message)
 """
