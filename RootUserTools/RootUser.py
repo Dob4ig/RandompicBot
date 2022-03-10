@@ -22,7 +22,7 @@ class RootUser():
         return message.from_user.id in self.root_users
 
     def show_help(self) -> str:
-        with open("source/root_help.txt", "r") as help:
+        with open("source/root_help.txt", "r", encoding="utf-8") as help:
             return help.read()
 
     def __parse_id(self, message: Message) -> str:
