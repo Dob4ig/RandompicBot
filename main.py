@@ -47,7 +47,7 @@ check_acess = CheckAcess(bot, users_db, start_handle)
 
 @dp.message_handler(commands="help", state=[None, User_state.admin_started, User_state.user_started])
 async def haldle_help(message: types.Message):
-    with open("source/help.txt", "r") as help:
+    with open("source/help.txt", "r", encoding="utf-8") as help:
         await bot.send_message(message.chat.id, help.read())
 
 
