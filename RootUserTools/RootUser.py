@@ -22,12 +22,8 @@ class RootUser():
         return message.from_user.id in self.root_users
 
     def show_help(self) -> str:
-        help_message = """Команды для root:
-$ help -- Вывести список команд.
-$ ban_user {id} -- Заблокировать пользователя по id.
-$get_list {role} -- Получить список пользователей по роли.
-"""
-        return help_message
+        with open("source/root_help.txt", "r") as help:
+            return help.read()
 
     def __parse_id(self, message: Message) -> str:
         return "".join(re.findall("\d", message.text))
