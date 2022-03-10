@@ -24,7 +24,7 @@ class UsersDB:
     ban_user(id) -- Меняет роль пользователя на banned.
     add_channel(id, channel) -- Добавляет пользователю channel.
     del_channel(id, channel) -- Удаляет пользователю channel.
-    get_users(role) -- Получаем set всех пользователей с ролью role.
+    get_users(*roles) -- Получаем set всех пользователей с ролью role.
     get_channel(id) -- Получаем id канала пользователя по его user_id.
     get_fullname(id) -- получаем никнейм пользователя по его user_id.
     """
