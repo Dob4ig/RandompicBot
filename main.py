@@ -47,7 +47,7 @@ async def start_handle(message: types.Message, state: FSMContext):
         pass
     else:
         await bot.send_message(message.chat.id, users_db.add_user(user_id, message.from_user.full_name))
-
+        await start_handle(message, state)
 
 check_acess = CheckAcess(bot, users_db, start_handle)
 
