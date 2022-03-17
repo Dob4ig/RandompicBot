@@ -1,3 +1,6 @@
+from itertools import count
+from webbrowser import get
+from aiogram import Bot
 from aiogram.types import Message
 import re
 from config.config import ROOT_ACESS
@@ -49,3 +52,14 @@ class RootUser():
 
     def del_admin(self, message: Message) -> str:
         return self.db.del_admin(self.__parse_id(message))
+
+    async def send_notification(self, bot: Bot, users: dict, text: str) -> str:
+        counter = 0
+        for user in users:
+            try:
+                await bot.send_message(int(user), text)
+                counter += 1
+            except:
+                pass
+
+        return f"Отправлено в {counter} чатов"
