@@ -88,22 +88,17 @@ async def acess_root(message: types.Message):
     if not root.check_access:
         return
 
-    if "help" in message.text:
+    if message.text.startswith("$help"):
         await bot.send_message(message.chat.id, root.show_help())
-
-    elif "unban_user" in message.text:
+    elif message.text.startswith("$unban"):
         await bot.send_message(message.chat.id, root.unban_user(message))
-
-    elif "ban_user" in message.text:
-        await bot.send_message(
-            message.chat.id, root.ban_user(message))
-
-    elif "get_list" in message.text:
+    elif message.text.startswith("$ban"):
+        await bot.send_message(message.chat.id, root.ban_user(message))
+    elif message.text.startswith("$get_list"):
         await bot.send_message(message.chat.id, root.get_list(message))
-
-    elif "set_admin" in message.text:
+    elif message.text.startswith("$set_admin"):
         await bot.send_message(message.chat.id, root.set_admin(message))
-    elif "del_admin" in message.text:
+    elif message.text.startswith("$del_admin"):
         await bot.send_message(message.chat.id, root.del_admin(message))
 
 
