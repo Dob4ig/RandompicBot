@@ -84,7 +84,7 @@ async def show_admin_images(message: types.Message, state: FSMContext):
 
 
 @ dp.message_handler(HashTag, state=[None, User_state.admin_started, User_state.user_started])
-async def acess_root(message: types.Message):
+async def acess_root(message: types.Message, state: FSMContext):
     if not root.check_access:
         return
 
@@ -100,6 +100,26 @@ async def acess_root(message: types.Message):
         await bot.send_message(message.chat.id, root.set_admin(message))
     elif message.text.startswith("$del_admin"):
         await bot.send_message(message.chat.id, root.del_admin(message))
+    elif message.text.startswith("$msg"):
+        await state.update_data(users=root.get_list(message))
+        await User_state.select_notification_text.set()
+        await bot.send_message(message.chat.id, "Введите сообщение для рассылки! ($ <- для отмены)")
+
+
+@dp.message_handler(content_types="text", state=User_state.select_notification_text)
+async def send_notification(message: types.Message, state: FSMContext) -> None:
+    if message.text == "$":
+        # Что бы в памяти не болтался словарь пользователей, обнуляем data.
+        await state.reset_state(with_data=True)
+        await bot.send_message(message.chat.id, "Отменено!")
+        return
+    data = await state.get_data()
+    try:
+        await bot.send_message(
+            message.chat.id, await root.send_notification(
+                bot=bot, users=data["users"], text=message.text))
+    finally:
+        await state.reset_state(with_data=True)
 
 
 if __name__ == '__main__':
