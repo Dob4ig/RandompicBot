@@ -19,6 +19,7 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 users_db = UsersDB("db/users.db")
 root = RootUser(ROOT_ACESS, users_db)
 add_admin = AddAdmin(bot, users_db)
+check_acess = CheckAcess(bot, users_db, add_admin)
 
 
 @dp.message_handler(commands="start", state=[None, User_state.admin_started, User_state.user_started])
@@ -41,8 +42,6 @@ async def start_handle(message: types.Message, state: FSMContext):
     else:
         await bot.send_message(message.chat.id, users_db.add_user(user_id, message.from_user.full_name))
         await start_handle(message, state)
-
-check_acess = CheckAcess(bot, users_db, start_handle)
 
 
 @dp.message_handler(commands="help", state=[None, User_state.admin_started, User_state.user_started])
@@ -70,8 +69,10 @@ async def show_user_images(message: types.Message, state: FSMContext):
 
 @dp.message_handler(Text(equals=["Отправка👍", "Пропуск❌"]), state=User_state.admin_started)
 async def show_admin_images(message: types.Message, state: FSMContext):
-    if not check_acess.check_admin(message):
+    if not await check_acess.check_admin(message):
+        await state.reset_state(with_data=True)
         await start_handle(message)
+        return
     data = await state.get_data()
     if message.text == "Отправка👍":
         await bot.send_photo(users_db.get_channel(message.from_user.id), data["photo_url"])

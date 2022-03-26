@@ -24,32 +24,13 @@ class CheckAcess():
 
     async def check_admin(self, message: Message) -> bool:
         try:
-            if await message.from_user.id in self.db.get_users("admin")\
+            if message.from_user.id in self.db.get_users("admin")\
                     and await self.add_admin.get_is_admin(message.from_user.id, self.db.get_channel(message.from_user.id))\
                     and await self.add_admin.get_is_admin(self.bot.id, self.db.get_channel(message.from_user.id)):
-                pass
+                return True
             else:
                 self.db.del_admin(message.from_user.id)
                 return False
         except:
             self.db.del_admin(message.from_user.id)
             return False
-
-
-"""
-if message.from_user.id in users_db.get_users("admin"):
-        pass
-    else:
-        await start_handle(message, state)
-        return
-    try:
-        if await add_admin.get_is_admin(message.from_user.id, users_db.get_channel(message.from_user.id))\
-                and await add_admin.get_is_admin(bot.id, users_db.get_channel(message.from_user.id)):
-            pass
-        else:
-            users_db.del_admin(message.from_user.id)
-            await start_handle(message)
-    except:
-        users_db.del_admin(message.from_user.id)
-        await start_handle(message)
-"""
